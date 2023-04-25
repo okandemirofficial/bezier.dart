@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import 'close_to_double.dart';
 
@@ -37,9 +37,8 @@ class CloseToVectorMatcher extends Matcher {
   }
 
   @override
-  Description describe(Description description) =>
-      description.addDescriptionOf(vector);
+  Description describe(Description description) => description.addDescriptionOf(vector);
 }
 
-Matcher closeToVector(Vector vector, [double delta = defaultDelta]) =>
+Matcher closeToVector(Vector2 vector, [double delta = defaultDelta]) =>
     CloseToVectorMatcher(vector, delta);

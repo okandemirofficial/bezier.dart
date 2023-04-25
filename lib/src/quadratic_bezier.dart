@@ -1,4 +1,4 @@
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import 'package:bezier/bezier.dart';
 
@@ -9,8 +9,7 @@ class QuadraticBezier extends Bezier {
   /// point, and the third its end point.
   QuadraticBezier(List<Vector2> points) : super(points) {
     if (points.length != 3) {
-      throw ArgumentError(
-          'Quadratic Bézier curves require exactly three points');
+      throw ArgumentError('Quadratic Bézier curves require exactly three points');
     }
   }
 
@@ -36,10 +35,8 @@ class QuadraticBezier extends Bezier {
   }
 
   @override
-  Vector2 derivativeAt(double t,
-      {List<Vector2>? cachedFirstOrderDerivativePoints}) {
-    final derivativePoints =
-        cachedFirstOrderDerivativePoints ?? firstOrderDerivativePoints;
+  Vector2 derivativeAt(double t, {List<Vector2>? cachedFirstOrderDerivativePoints}) {
+    final derivativePoints = cachedFirstOrderDerivativePoints ?? firstOrderDerivativePoints;
     final result = Vector2.zero();
     Vector2.mix(derivativePoints[0], derivativePoints[1], t, result);
     return result;
@@ -70,6 +67,5 @@ class QuadraticBezier extends Bezier {
   }
 
   @override
-  String toString() =>
-      'BDQuadraticBezier([${points[0]}, ${points[1]}, ${points[2]}])';
+  String toString() => 'BDQuadraticBezier([${points[0]}, ${points[1]}, ${points[2]}])';
 }

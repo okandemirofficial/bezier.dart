@@ -1,23 +1,23 @@
 import 'package:test/test.dart';
 
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import 'close_to_double.dart';
 import 'close_to_vector.dart';
 
 class CloseToVectorListMatcher extends Matcher {
-  List<Vector> vectors;
+  List<Vector2> vectors;
   double delta;
 
   CloseToVectorListMatcher(this.vectors, [this.delta = defaultDelta]);
 
   @override
   bool matches(item, Map matchState) {
-    if (!(item is List<Vector>)) {
+    if (!(item is List<Vector2>)) {
       return false;
     }
 
-    List<Vector> otherVectors = item;
+    List<Vector2> otherVectors = item;
 
     final length = vectors.length;
     if (length != otherVectors.length) {
@@ -38,10 +38,8 @@ class CloseToVectorListMatcher extends Matcher {
   }
 
   @override
-  Description describe(Description description) =>
-      description.addDescriptionOf(vectors);
+  Description describe(Description description) => description.addDescriptionOf(vectors);
 }
 
-Matcher closeToVectorList(List<Vector> vectors,
-        [double delta = defaultDelta]) =>
+Matcher closeToVectorList(List<Vector2> vectors, [double delta = defaultDelta]) =>
     CloseToVectorListMatcher(vectors, delta);

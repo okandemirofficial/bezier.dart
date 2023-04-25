@@ -1,3 +1,5 @@
+import 'package:vector_math/vector_math_64.dart';
+
 import '../testing_tools/testing_tools.dart';
 
 void main() {
@@ -33,8 +35,7 @@ void main() {
     test('empty list throws error', () {
       final points = <Vector2>[];
 
-      expect(() => indexOfNearestPoint(points, Vector2(5.0, 5.0)),
-          throwsArgumentError);
+      expect(() => indexOfNearestPoint(points, Vector2(5.0, 5.0)), throwsArgumentError);
     });
 
     test('distribution a', () {
@@ -93,8 +94,8 @@ void main() {
 
   group('nearestTValue', () {
     test('quadratic', () {
-      final curve = QuadraticBezier(
-          [Vector2(90.0, 0.0), Vector2(-10.0, -50.0), Vector2(-45.0, 45.0)]);
+      final curve =
+          QuadraticBezier([Vector2(90.0, 0.0), Vector2(-10.0, -50.0), Vector2(-45.0, 45.0)]);
 
       expect(curve.nearestTValue(Vector2(90.0, 0.0)), equals(0.0));
       expect(curve.nearestTValue(Vector2(-45.0, 45.0)), equals(1.0));
@@ -113,21 +114,13 @@ void main() {
 
       final lookUpTable = curve.positionLookUpTable(intervalsCount: 300);
 
-      expect(
-          curve.nearestTValue(Vector2(91.0, 5.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(91.0, 5.0), cachedPositionLookUpTable: lookUpTable),
           equals(0.0));
-      expect(
-          curve.nearestTValue(Vector2(-48.0, 48.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(-48.0, 48.0), cachedPositionLookUpTable: lookUpTable),
           equals(1.0));
-      expect(
-          curve.nearestTValue(Vector2(0.0, 0.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(0.0, 0.0), cachedPositionLookUpTable: lookUpTable),
           closeToDouble(0.58666666666));
-      expect(
-          curve.nearestTValue(Vector2(24.0, 42.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(24.0, 42.0), cachedPositionLookUpTable: lookUpTable),
           closeToDouble(0.57233333333));
 
       expect(
@@ -138,8 +131,7 @@ void main() {
           curve.nearestTValue(Vector2(0.0, 0.0),
               cachedPositionLookUpTable: lookUpTable, stepSize: 0.01),
           closeToDouble(0.5866999999999));
-      expect(curve.nearestTValue(Vector2(0.0, 0.0), stepSize: 0.01),
-          closeToDouble(0.586599999999));
+      expect(curve.nearestTValue(Vector2(0.0, 0.0), stepSize: 0.01), closeToDouble(0.586599999999));
     });
 
     test('quadratic, equidistant solutions prefers earlier t value', () {
@@ -181,21 +173,13 @@ void main() {
 
       final lookUpTable = curve.positionLookUpTable(intervalsCount: 10);
 
-      expect(
-          curve.nearestTValue(Vector2(-110.0, -110.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(-110.0, -110.0), cachedPositionLookUpTable: lookUpTable),
           equals(0.0));
-      expect(
-          curve.nearestTValue(Vector2(150.0, 190.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(150.0, 190.0), cachedPositionLookUpTable: lookUpTable),
           equals(1.0));
-      expect(
-          curve.nearestTValue(Vector2(0.0, 0.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(0.0, 0.0), cachedPositionLookUpTable: lookUpTable),
           closeToDouble(0.51));
-      expect(
-          curve.nearestTValue(Vector2(40.0, -40.0),
-              cachedPositionLookUpTable: lookUpTable),
+      expect(curve.nearestTValue(Vector2(40.0, -40.0), cachedPositionLookUpTable: lookUpTable),
           closeToDouble(0.6));
 
       expect(
@@ -206,8 +190,7 @@ void main() {
           curve.nearestTValue(Vector2(40.0, -40.0),
               cachedPositionLookUpTable: lookUpTable, stepSize: 0.01),
           closeToDouble(0.602));
-      expect(curve.nearestTValue(Vector2(40.0, -40.0), stepSize: 0.01),
-          closeToDouble(0.6024));
+      expect(curve.nearestTValue(Vector2(40.0, -40.0), stepSize: 0.01), closeToDouble(0.6024));
     });
   });
 }

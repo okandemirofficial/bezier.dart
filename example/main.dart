@@ -1,6 +1,6 @@
 import "dart:html";
 import "dart:math";
-import "package:vector_math/vector_math.dart";
+import 'package:vector_math/vector_math_64.dart';
 import "package:bezier/bezier.dart";
 
 const oscillationRateX = 0.63;
@@ -53,10 +53,8 @@ void drawFrame(num time) {
 List<Vector2> pointsAtTime(double time) => timeOffsets.map((offset) {
       final adjustedTime = slitherRate * time + offset;
       return new Vector2(
-          canvas.width! *
-              (0.5 + cos(oscillationRateX * adjustedTime) * slitherRadius),
-          canvas.height! *
-              (0.5 + sin(oscillationRateY * adjustedTime) * slitherRadius));
+          canvas.width! * (0.5 + cos(oscillationRateX * adjustedTime) * slitherRadius),
+          canvas.height! * (0.5 + sin(oscillationRateY * adjustedTime) * slitherRadius));
     }).toList();
 
 void clearCanvas() {
@@ -75,8 +73,8 @@ void drawCurve(CubicBezier curve) {
   final points = curve.points;
 
   context.moveTo(points[0].x, points[0].y);
-  context.bezierCurveTo(curve.points[1].x, curve.points[1].y, curve.points[2].x,
-      curve.points[2].y, curve.points[3].x, curve.points[3].y);
+  context.bezierCurveTo(curve.points[1].x, curve.points[1].y, curve.points[2].x, curve.points[2].y,
+      curve.points[3].x, curve.points[3].y);
 }
 
 void drawMainCurve(CubicBezier curve) {
@@ -97,8 +95,7 @@ void drawNormalLines(CubicBezier curve) {
     final t = (lineIndex + 1) / (normalLinesCount + 1);
 
     final pointOnCurve = curve.pointAt(t);
-    final normal =
-        curve.normalAt(t, cachedFirstOrderDerivativePoints: derivativePoints);
+    final normal = curve.normalAt(t, cachedFirstOrderDerivativePoints: derivativePoints);
     final offset = normal * normalLineLength;
 
     final positiveOffsetPoint = pointOnCurve + offset;
@@ -150,8 +147,7 @@ void drawLineSegmentIntersections(CubicBezier curve, double time) {
     ..lineTo(endPoint.x, endPoint.y)
     ..stroke();
 
-  final intersectionTValues =
-      curve.intersectionsWithLineSegment(startPoint, endPoint);
+  final intersectionTValues = curve.intersectionsWithLineSegment(startPoint, endPoint);
 
   context.setStrokeColorRgb(255, 0, 0);
   intersectionTValues.forEach((t) {

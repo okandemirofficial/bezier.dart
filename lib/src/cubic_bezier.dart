@@ -1,4 +1,4 @@
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import 'package:bezier/bezier.dart';
 
@@ -37,10 +37,8 @@ class CubicBezier extends Bezier {
   }
 
   @override
-  Vector2 derivativeAt(double t,
-      {List<Vector2>? cachedFirstOrderDerivativePoints}) {
-    final derivativePoints =
-        cachedFirstOrderDerivativePoints ?? firstOrderDerivativePoints;
+  Vector2 derivativeAt(double t, {List<Vector2>? cachedFirstOrderDerivativePoints}) {
+    final derivativePoints = cachedFirstOrderDerivativePoints ?? firstOrderDerivativePoints;
     final mt = 1.0 - t;
     final a = mt * mt;
     final b = 2.0 * mt * t;
@@ -54,6 +52,5 @@ class CubicBezier extends Bezier {
   }
 
   @override
-  String toString() =>
-      'BDCubicBezier([${points[0]}, ${points[1]}, ${points[2]}, ${points[3]}])';
+  String toString() => 'BDCubicBezier([${points[0]}, ${points[1]}, ${points[2]}, ${points[3]}])';
 }

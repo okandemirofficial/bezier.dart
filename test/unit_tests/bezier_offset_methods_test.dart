@@ -1,3 +1,5 @@
+import 'package:vector_math/vector_math_64.dart';
+
 import '../testing_tools/testing_tools.dart';
 
 void main() {
@@ -26,11 +28,7 @@ void main() {
     });
 
     test('quadratic scaledCurve', () {
-      final points = [
-        Vector2(10.0, 0.0),
-        Vector2(30.0, 1.0),
-        Vector2(60.0, 0.0)
-      ];
+      final points = [Vector2(10.0, 0.0), Vector2(30.0, 1.0), Vector2(60.0, 0.0)];
       final curve = QuadraticBezier(points);
 
       final result = curve.scaledCurve(10.0);
@@ -47,8 +45,8 @@ void main() {
     });
 
     test('quadratic scaledCurve, linear curve', () {
-      final curve = QuadraticBezier(
-          [Vector2(0.0, 0.0), Vector2(50.0, 50.0), Vector2(100.0, 100.0)]);
+      final curve =
+          QuadraticBezier([Vector2(0.0, 0.0), Vector2(50.0, 50.0), Vector2(100.0, 100.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<QuadraticBezier>());
@@ -63,12 +61,8 @@ void main() {
     });
 
     test('cubic scaledCurve, parallel endpoint normals', () {
-      final curve = CubicBezier([
-        Vector2(0.0, 0.0),
-        Vector2(0.0, 100.0),
-        Vector2(100.0, -100.0),
-        Vector2(100.0, 0.0)
-      ]);
+      final curve = CubicBezier(
+          [Vector2(0.0, 0.0), Vector2(0.0, 100.0), Vector2(100.0, -100.0), Vector2(100.0, 0.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<CubicBezier>());
@@ -84,12 +78,8 @@ void main() {
     });
 
     test('cubic scaledCurve, parallel endpoint normals, another test', () {
-      final curve = CubicBezier([
-        Vector2(0.0, 0.0),
-        Vector2(50.0, 0.0),
-        Vector2(50.0, 100.0),
-        Vector2(100.0, 100.0)
-      ]);
+      final curve = CubicBezier(
+          [Vector2(0.0, 0.0), Vector2(50.0, 0.0), Vector2(50.0, 100.0), Vector2(100.0, 100.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<CubicBezier>());
@@ -105,12 +95,8 @@ void main() {
     });
 
     test('cubic scaledCurve, anti-parallel endpoint normals', () {
-      final curve = CubicBezier([
-        Vector2(0.0, 0.0),
-        Vector2(0.0, 100.0),
-        Vector2(100.0, 100.0),
-        Vector2(100.0, 0.0)
-      ]);
+      final curve = CubicBezier(
+          [Vector2(0.0, 0.0), Vector2(0.0, 100.0), Vector2(100.0, 100.0), Vector2(100.0, 0.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<CubicBezier>());
@@ -125,15 +111,10 @@ void main() {
           ]));
     });
 
-    test(
-        'cubic scaledCurve, non-linear curve with first control point overlapping start point',
+    test('cubic scaledCurve, non-linear curve with first control point overlapping start point',
         () {
-      final curve = CubicBezier([
-        Vector2(0.0, 0.0),
-        Vector2(0.0, 0.0),
-        Vector2(50.0, 100.0),
-        Vector2(100.0, 0.0)
-      ]);
+      final curve = CubicBezier(
+          [Vector2(0.0, 0.0), Vector2(0.0, 0.0), Vector2(50.0, 100.0), Vector2(100.0, 0.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<CubicBezier>());
@@ -147,15 +128,9 @@ void main() {
           ]));
     });
 
-    test(
-        'cubic scaledCurve, non-linear curve with second control point overlapping end point',
-        () {
-      final curve = CubicBezier([
-        Vector2(0.0, 0.0),
-        Vector2(50.0, 100.0),
-        Vector2(100.0, 0.0),
-        Vector2(100.0, 0.0)
-      ]);
+    test('cubic scaledCurve, non-linear curve with second control point overlapping end point', () {
+      final curve = CubicBezier(
+          [Vector2(0.0, 0.0), Vector2(50.0, 100.0), Vector2(100.0, 0.0), Vector2(100.0, 0.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<CubicBezier>());
@@ -169,23 +144,16 @@ void main() {
           ]));
     });
 
-    test(
-        'quadratic scaledCurve, linear curve with control point overlapping start point',
-        () {
-      final curve = QuadraticBezier(
-          [Vector2(0.0, 0.0), Vector2(0.0, 0.0), Vector2(100.0, 0.0)]);
+    test('quadratic scaledCurve, linear curve with control point overlapping start point', () {
+      final curve = QuadraticBezier([Vector2(0.0, 0.0), Vector2(0.0, 0.0), Vector2(100.0, 0.0)]);
 
       final scaledCurve = curve.scaledCurve(10.0);
       expect(scaledCurve, TypeMatcher<QuadraticBezier>());
-      expect(
-          scaledCurve.points,
-          closeToVectorList(
-              [Vector2(0.0, 10.0), Vector2(0.0, 10.0), Vector2(100.0, 10.0)]));
+      expect(scaledCurve.points,
+          closeToVectorList([Vector2(0.0, 10.0), Vector2(0.0, 10.0), Vector2(100.0, 10.0)]));
     });
 
-    test(
-        'cubic scaledCurve, linear curve with first control point overlapping start point',
-        () {
+    test('cubic scaledCurve, linear curve with first control point overlapping start point', () {
       final curve = CubicBezier([
         Vector2(0.0, 0.0),
         Vector2(0.0, 0.0),
@@ -197,22 +165,14 @@ void main() {
       expect(scaledCurve, TypeMatcher<CubicBezier>());
       expect(
           scaledCurve.points,
-          closeToVectorList([
-            Vector2(0.0, 10.0),
-            Vector2(0.0, 10.0),
-            Vector2(50.0, 10.0),
-            Vector2(100.0, 10.0)
-          ]));
+          closeToVectorList(
+              [Vector2(0.0, 10.0), Vector2(0.0, 10.0), Vector2(50.0, 10.0), Vector2(100.0, 10.0)]));
     });
   });
 
   group('toCubicBezier', () {
     test('quadratic toCubicBezier', () {
-      final points = [
-        Vector2(10.0, 10.0),
-        Vector2(70.0, 95.0),
-        Vector2(15.0, 80.0)
-      ];
+      final points = [Vector2(10.0, 10.0), Vector2(70.0, 95.0), Vector2(15.0, 80.0)];
       final curve = QuadraticBezier(points);
 
       final cubicCurve = curve.toCubicBezier();
@@ -331,11 +291,7 @@ void main() {
     });
 
     test('linear quadratic offsetCurve', () {
-      final points = [
-        Vector2(0.0, 0.0),
-        Vector2(20.0, 5.0),
-        Vector2(40.0, 10.0)
-      ];
+      final points = [Vector2(0.0, 0.0), Vector2(20.0, 5.0), Vector2(40.0, 10.0)];
       final curve = QuadraticBezier(points);
 
       final offsetCurves = curve.offsetCurve(5.0);

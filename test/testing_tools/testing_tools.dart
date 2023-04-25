@@ -1,7 +1,5 @@
 export 'package:test/test.dart';
 
-export 'package:vector_math/vector_math.dart';
-
 export 'package:bezier/bezier.dart';
 export 'package:bezier/src/bezier_tools.dart';
 

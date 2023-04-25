@@ -1,13 +1,11 @@
+import 'package:vector_math/vector_math_64.dart';
+
 import '../testing_tools/testing_tools.dart';
 
 void main() {
   group('unnamed constructor', () {
     test('quadratic constructor', () {
-      final points = [
-        Vector2(40.0, 40.0),
-        Vector2(30.0, 10.0),
-        Vector2(55.0, 25.0)
-      ];
+      final points = [Vector2(40.0, 40.0), Vector2(30.0, 10.0), Vector2(55.0, 25.0)];
       final curve = QuadraticBezier(points);
 
       expect(curve, TypeMatcher<QuadraticBezier>());
@@ -32,11 +30,7 @@ void main() {
 
   group('fromPoints constructor', () {
     test('fromPoints, three entries', () {
-      final points = <Vector2>[
-        Vector2(0.0, 0.0),
-        Vector2(250.0, -50.0),
-        Vector2(100.0, 80.0)
-      ];
+      final points = <Vector2>[Vector2(0.0, 0.0), Vector2(250.0, -50.0), Vector2(100.0, 80.0)];
       final curve = Bezier.fromPoints(points);
 
       expect(curve, TypeMatcher<QuadraticBezier>());
