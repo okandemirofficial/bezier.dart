@@ -39,6 +39,7 @@ abstract class Bezier {
   int get order;
 
   /// Returns the point along the curve at the parameter value [t].
+  @Deprecated('use PointAt v2 instead')
   Vector2 pointAt(double t);
 
   /// The starting guide point for the curve.

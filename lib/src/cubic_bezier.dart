@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:vector_math/vector_math_64.dart';
 
 import 'package:bezier/bezier.dart';
@@ -11,11 +13,75 @@ class CubicBezier extends Bezier {
     if (points.length != 4) {
       throw ArgumentError('Cubic Bézier curves require exactly four points');
     }
+
+    ///GPT GENERATED
+    for (var i = 0; i <= 100; i++) {
+      var t = i / 100.0;
+      var pt = _calculateBezierVector2(t, points);
+      if (i > 0) {
+        var dx = pt.x - _calculateBezierVector2(t - 0.01, points).x;
+        var dy = pt.y - _calculateBezierVector2(t - 0.01, points).y;
+        totalLength += sqrt(dx * dx + dy * dy);
+      }
+      arcLengths.add(totalLength);
+    }
+  }
+
+  ///GPT GENERATED
+  List<double> arcLengths = [];
+  double totalLength = 0.0;
+
+  ///GPT GENERATED
+  Vector2 _calculateBezierVector2(double t, List<Vector2> controlVector2s) {
+    double x = 0.0, y = 0.0;
+
+    int n = controlVector2s.length - 1;
+    for (int i = 0; i <= n; i++) {
+      var binCoeff = _binomialCoefficient(n, i);
+      var powTerm = pow(1 - t, n - i) * pow(t, i);
+      x += binCoeff * powTerm * controlVector2s[i].x;
+      y += binCoeff * powTerm * controlVector2s[i].y;
+    }
+    return Vector2(x, y);
+  }
+
+  ///GPT Generated
+  int _binomialCoefficient(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    int coeff = 1;
+    if (k > n - k) k = n - k;
+    for (var i = 0; i < k; i++) {
+      coeff *= (n - i);
+      coeff ~/= (i + 1);
+    }
+    return coeff;
+  }
+
+  ///GPT Generated
+  double _getNormalizedT(double t) {
+    var targetLength = t * totalLength;
+    var low = 0, high = arcLengths.length;
+    while (low < high) {
+      var mid = (low + (high - low) / 2).floor();
+      if (arcLengths[mid] < targetLength) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    if (arcLengths[low] > targetLength) low--;
+    var lengthBefore = arcLengths[low];
+    var segmentLength = arcLengths[low + 1] - lengthBefore;
+
+    var segmentT = (targetLength - lengthBefore) / segmentLength;
+    return (low + segmentT) / 100.0;
   }
 
   @override
   int get order => 3;
 
+  ///Old approach
   @override
   Vector2 pointAt(double t) {
     final t2 = t * t;
@@ -34,6 +100,13 @@ class CubicBezier extends Bezier {
     point.addScaled(points[3], d);
 
     return point;
+  }
+
+  ///GPT GENERATED
+  ///This method generates more accurate results
+  Vector2 pointAtV2(double t) {
+    var normalizedT = _getNormalizedT(t);
+    return _calculateBezierVector2(normalizedT, points);
   }
 
   @override

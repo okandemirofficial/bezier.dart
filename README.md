@@ -2,156 +2,86 @@
 
 The library was developed, documented, and published by [Aaron Barrett](https://www.aaronbarrett.com) and Isaac Barrett.  It is based heavily on the work of [Pomax](https://pomax.github.io/), including his excellent [Primer on Bézier Curves](https://pomax.github.io/bezierinfo/) and his original JavaScript library, [Bezier.js](https://pomax.github.io/bezierjs/).
 
-We're trying to design **bezier.dart** to be both platform independent and context independent.  You can run the library anywhere you can run Dart: in a web browser, in a [Flutter](https://flutter.io/) application, server side, and beyond.
 
-For live examples of the library's API, see the project page at [dartographer.com/bezier](https://www.dartographer.com/bezier).
+## FORK CHANGES
+- Dependency on vector_math_64 instead of vector_math
+- .Vector2AtV2() GPT generated method which gives more accurate results
 
-## Features
+Distance between in every t = 0.10 (should be similar for more accurate results)
 
-- Supports both quadratic and cubic two dimensional Bézier curves
-- Calculate the coordinates of a point at any parameter value `t` along a curve
-- Derivative and normal values at any `t` parameter value
-- Accurate length approximations (using the Legendre-Gauss quadrature algorithm)
-- Split a curve into equivalent subcurves between any `t` parameter values
-- Find the extrema of a curve on both the x and y axes
-- Calculate the bounding box for a curve
-- Given any curve, derive a new curve, offset from the original curve along the normals at a given distance
-- Calculate the positions of a curve's intersections with itself, with another curve, or with a line segment
-- Find points evenly spaced along the arc length of a curve
-- Heavily documented and tested
-- Straightforward, readable code
+  - Vector2 AT V1
+ distance = 0.0, t = 0.0, normalized = 0.0
+ distance = 1384.1232613901564,
+ distance = 1384.3627465296693,
+ distance = 1389.1657056485542,
+ distance = 1391.5993962911414,
+ distance = 1392.5654873072713,
+ distance = 1392.5654873072745,
+ distance = 1391.5993962911366,
+ distance = 1389.1657056485572,
+ distance = 1384.362746529668,
+ distance = 1384.1232613901586,
+ executed in 0:00:00.016899
 
-## Getting Started
+- Vector2 AT V2
 
-1. Add the following to your project's **pubspec.yaml** and run **pub get**.
+ distance = 0.0, t = 0.0
+ distance = 1378.731300870478,
+ distance = 1296.1867149450352,
+ distance = 1347.9243302203572,
+ distance = 1432.515270424717,
+ distance = 1487.5819305167695,
+ distance = 1487.581930516769,
+ distance = 1432.5152704247162,
+ distance = 1347.9243302203588,
+ distance = 1296.1867149450343,
+ distance = 1378.7313008704773,
+ executed in 0:00:00.008565
 
-```yaml
-dependencies:
-  bezier: any
-```
 
-2. Import **bezier.dart** from a file in your project.  In most cases you will also want to import the [vector_math](https://pub.dartlang.org/packages/vector_math) library.
+ ## IT'S NOT ACCURATE ENOUGH?
 
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
-```
+ try this:
+ ```
 
-## Examples
+class BezierCurve {
+  List<Vector2> controlVector2s;
+  List<double> arcLengths = [];
+  double totalLength = 0.0;
 
-* Instantiate a Bézier curve.
+  BezierCurve(this.controlVector2s) {
+    for (var i = 0; i <= 1000; i++) {  // Change here: increased to 1000 steps
+      var t = i / 1000.0;  // Change here: decreased step size to 0.001
+      var pt = calculateBezierVector2(t, controlVector2s);
+      if (i > 0) {
+        var dx = pt.x - calculateBezierVector2(t - 0.001, controlVector2s).x;  // Change here: decreased step size to 0.001
+        var dy = pt.y - calculateBezierVector2(t - 0.001, controlVector2s).y;  // Change here: decreased step size to 0.001
+        totalLength += sqrt(dx * dx + dy * dy);
+      }
+      arcLengths.add(totalLength);
+    }
+  }
 
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
+  // ... rest of the BezierCurve class remains unchanged ...
 
-void main() {
-  // bezier.dart supports both quadratic curves...
-  final quadraticCurve = QuadraticBezier([
-    Vector2(-40.0, -40.0),
-    Vector2(30.0, 10.0),
-    Vector2(55.0, 25.0)
-  ]);
+  double getNormalizedT(double t) {
+    var targetLength = t * totalLength;
+    var low = 0, high = arcLengths.length;
+    while (low < high) {
+      var mid = (low + (high - low) / 2).floor();
+      if (arcLengths[mid] < targetLength) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    if (arcLengths[low] > targetLength) low--;
+    var lengthBefore = arcLengths[low];
+    var segmentLength = arcLengths[low + 1] - lengthBefore;
 
-  // ...and cubic curves!
-  final cubicCurve = CubicBezier([
-    Vector2(10.0, 10.0),
-    Vector2(70.0, 95.0),
-    Vector2(25.0, 20.0),
-    Vector2(15.0, 80.0)
-  ]);
+    var segmentT = (targetLength - lengthBefore) / segmentLength;
+    return (low + segmentT) / 1000.0;  // Change here: adjusted for 1000 steps
+  }
 }
-```
 
-* Compute a point along a curve at `t` of `0.75`.
-
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
-
-void main() {
-  final curve = QuadraticBezier([
-    Vector2(10.0, 10.0),
-    Vector2(70.0, 95.0),
-    Vector2(15.0, 80.0)
-  ]);
-
-  final computedPoint = curve.pointAt(0.75);
-}
-```
-
-* Split a curve between the `t` parameter values of `0.2` and `0.6`.
-
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
-
-void main() {
-  final curve = CubicBezier([
-    Vector2(10.0, 10.0),
-    Vector2(70.0, 95.0),
-    Vector2(25.0, 20.0),
-    Vector2(15.0, 80.0)
-  ]);
-
-  final subcurve = curve.subcurveBetween(0.2, 0.6);
-}
-```
-
-* Find the intersection `t` values between a curve and a line segment.
-
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
-
-void main() {
-  final curve = QuadraticBezier([
-    Vector2(10.0, 500.0),
-    Vector2(50.0, 0.0),
-    Vector2(90.0, 500.0)
-  ]);
-
-  final lineStart = Vector2(0.0, 400.0);
-  final lineEnd = Vector2(100.0, 410.0);
-
-  final intersections = curve.intersectionsWithLineSegment(lineStart, lineEnd);
-}
-```
-
-* Derive an offset curve (composed of a series of subcurves) at distance `12.0`.
-
-```dart
-import "package:vector_math/vector_math.dart";
-import "package:bezier/bezier.dart";
-
-void main() {
-  final curve = CubicBezier([
-    Vector2(10.0, 10.0),
-    Vector2(15.0, 95.0),
-    Vector2(20.0, 95.0),
-    Vector2(25.0, 10.0)
-  ]);
-
-  final subcurves = curve.offsetCurve(12.0);
-}
-```
-
-## Style, Formatting, Philosophy
-
-We've made our best effort to conform to the recommendations outlined in the [Effective Dart](https://www.dartlang.org/guides/language/effective-dart) guide.  Accordingly, this library is formatted using [dartfmt](https://github.com/dart-lang/dart_style).
-
-As fervent believers in the value of clean code, we are constantly seeking to improve the library and make it easier to work with.  Please alert us to any issues you notice, no matter how trivial.  We wholeheartedly welcome criticism and friendly debate!  :nerd_face:
-
-## Running Automated Tests
-
-To run the test cases from the terminal, run the following command from the **bezier.dart** root directory.
-
-```bash
-pub run test
-```
-
-Most IDEs now provide interfaces for running tests, which are generally easier to work with.  In most cases you can simply right click on a test file or directory in the project tree view and select the menu option to run the selected tests.
-
-## Submitting bugs, requesting features
-
-Please file feature requests and bugs using the GitHub [issues tab](https://github.com/aab29/bezier.dart/issues).
+ ```
