@@ -61,7 +61,10 @@ class CubicBezier extends Bezier {
   ///GPT Generated
   double _getNormalizedT(double t) {
     var targetLength = t * totalLength;
-    var low = 0, high = arcLengths.length;
+    if (arcLengths.isEmpty) {
+      return 0.0; // Handle case when array is empty
+    }
+    var low = 0, high = arcLengths.length - 1;
     while (low < high) {
       var mid = (low + (high - low) / 2).floor();
       if (arcLengths[mid] < targetLength) {
@@ -70,10 +73,17 @@ class CubicBezier extends Bezier {
         high = mid;
       }
     }
-    if (arcLengths[low] > targetLength) low--;
+    if (low > 0 && arcLengths[low] > targetLength) {
+      low--;
+    }
+    // Bound check to avoid index out of range
+    if (low < 0) low = 0;
+    if (low >= arcLengths.length - 1) low = arcLengths.length - 2;
     var lengthBefore = arcLengths[low];
     var segmentLength = arcLengths[low + 1] - lengthBefore;
-
+    if (segmentLength <= 0) {
+      return low / 100.0; // Handle division by zero case
+    }
     var segmentT = (targetLength - lengthBefore) / segmentLength;
     return (low + segmentT) / 100.0;
   }
