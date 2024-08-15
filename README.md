@@ -6,6 +6,7 @@ The library was developed, documented, and published by [Aaron Barrett](https://
 ## FORK CHANGES
 - Dependency on vector_math_64 instead of vector_math
 - .Vector2AtV2() GPT generated method which gives more accurate results
+- Deprecated intersectionsWithCurve https://github.com/aab29/bezier.dart/issues/25
 
 Distance between in every t = 0.10 (should be similar for more accurate results)
 
